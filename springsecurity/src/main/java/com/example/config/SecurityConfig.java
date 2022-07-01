@@ -1,35 +1,23 @@
-/**
- * 
- */
 package com.example.config;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 
 /**
+ * This class implements security based on latest security 5.7 version. using {@link EnableWebSecurity} and {@link SecurityFilterChain}
+ * 
  * @author kadam.sachin
  *
  */
-@SuppressWarnings("deprecation")
-@Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter{
+@EnableWebSecurity
+public class SecurityConfig {
 	
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		/*
-		 * http.authorizeHttpRequests() .antMatchers("/myBalance").authenticated()
-		 * .antMatchers("/myCards").authenticated()
-		 * .antMatchers("/myLoans").authenticated() .antMatchers("/contact").permitAll()
-		 * .antMatchers("/notices").permitAll() .and() .formLogin().and() .httpBasic();
-		 */
-		
-		http.authorizeHttpRequests().anyRequest()
-			.denyAll()
-			.and()
-			.formLogin()
-			.and()
-			.httpBasic();
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
+		return http.build();
 	}
 
 }

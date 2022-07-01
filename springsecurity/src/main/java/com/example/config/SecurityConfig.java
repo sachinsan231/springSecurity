@@ -16,7 +16,15 @@ public class SecurityConfig {
 	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
+		//http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
+		http.authorizeRequests()
+			.antMatchers("/myBalance").authenticated()
+			.antMatchers("/myCards").authenticated()
+			.antMatchers("/myLoans").authenticated()
+			.antMatchers("/notices").permitAll()
+			.antMatchers("/contact").permitAll()
+			.and().formLogin().and().httpBasic();
+			
 		return http.build();
 	}
 

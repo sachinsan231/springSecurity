@@ -17,15 +17,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests()
-		.antMatchers("/myBalance").authenticated()
-		.antMatchers("/myCards").authenticated()
-		.antMatchers("/myLoans").authenticated()
-		.antMatchers("/contact").permitAll()
-		.antMatchers("/notices").permitAll()
-		.and()
-		.formLogin().and()
-		.httpBasic();
+		/*
+		 * http.authorizeHttpRequests() .antMatchers("/myBalance").authenticated()
+		 * .antMatchers("/myCards").authenticated()
+		 * .antMatchers("/myLoans").authenticated() .antMatchers("/contact").permitAll()
+		 * .antMatchers("/notices").permitAll() .and() .formLogin().and() .httpBasic();
+		 */
+		
+		http.authorizeHttpRequests().anyRequest()
+			.denyAll()
+			.and()
+			.formLogin()
+			.and()
+			.httpBasic();
 	}
 
 }

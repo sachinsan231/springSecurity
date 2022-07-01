@@ -3,6 +3,9 @@ package com.example.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
@@ -26,6 +29,15 @@ public class SecurityConfig {
 			.and().formLogin().and().httpBasic();
 			
 		return http.build();
+	}
+	
+	
+	@SuppressWarnings("deprecation")
+	@Bean
+	public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
+		UserDetails admin = User.withDefaultPasswordEncoder().username("admin").password("12345").authorities("admin").build();
+		UserDetails user = User.withDefaultPasswordEncoder().username("user").password("12345").authorities("read").build();
+		return new InMemoryUserDetailsManager(admin, user);
 	}
 
 }

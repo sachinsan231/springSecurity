@@ -50,10 +50,10 @@ public class SecurityConfig {
 	 * user); }
 	 */
 
-	@Bean
-	public UserDetailsService userDetailsService(DataSource dataSource) {
-		return new JdbcUserDetailsManager(dataSource);
-	}
+	/*
+	 * @Bean public UserDetailsService userDetailsService(DataSource dataSource) {
+	 * return new JdbcUserDetailsManager(dataSource); }
+	 */
 	
 	@Bean
 	protected PasswordEncoder passwordEncoder() {

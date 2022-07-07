@@ -8,21 +8,23 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class SecurityCustomer implements UserDetails{
+public class SecurityCustomer implements UserDetails {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6690946490872875352L;
 
 	private final Customer customer;
-	
-	
-	
+
 	public SecurityCustomer(Customer customer) {
-		super();
 		this.customer = customer;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<GrantedAuthority> authorities = new ArrayList<>();
-		authorities.add(new SimpleGrantedAuthority((customer.getRole())));
+		authorities.add(new SimpleGrantedAuthority(customer.getRole()));
 		return authorities;
 	}
 

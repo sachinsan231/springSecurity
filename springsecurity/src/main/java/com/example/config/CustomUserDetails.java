@@ -1,6 +1,5 @@
 package com.example.config;
 
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;

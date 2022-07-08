@@ -43,7 +43,10 @@ public class SecurityConfig {
                 }).and().csrf().ignoringAntMatchers("/contact").
                 csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
         		.authorizeHttpRequests((auth) -> auth
-                        .antMatchers("/myAccount", "/myBalance", "/myLoans", "/myCards").authenticated()
+                        .antMatchers("/myAccount").hasAuthority("WRITE")
+                        .antMatchers("/myBalance").hasAuthority("READ")
+                        .antMatchers("/myLoans").hasAuthority("READ")
+                        .antMatchers("/myCards").authenticated()
                         .antMatchers("/notices", "/contact").permitAll()
                 ).httpBasic(Customizer.withDefaults());
         return http.build();

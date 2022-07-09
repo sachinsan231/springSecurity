@@ -11,9 +11,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+
+import com.example.filter.AuthoritiesLoggingAfterFilter;
+import com.example.filter.RequestValidationBeforeFilter;
 
 /**
  * This class implements security based on latest security 5.7 version. using {@link EnableWebSecurity} and {@link SecurityFilterChain}
@@ -42,6 +46,8 @@ public class SecurityConfig {
                     }
                 }).and().csrf().ignoringAntMatchers("/contact").
                 csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
+                .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
+                .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
         		.authorizeHttpRequests((auth) -> auth
 						/*
 						 * .antMatchers("/myAccount").hasAuthority("WRITE")

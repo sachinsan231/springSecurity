@@ -1,5 +1,6 @@
 package com.example.config;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,7 +18,10 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import com.example.constant.SecurityConstants;
 import com.example.filter.AuthoritiesLoggingAfterFilter;
+import com.example.filter.JWTSessionGeneratorFilter;
+import com.example.filter.JWTSessionValidatorFilter;
 import com.example.filter.RequestValidationBeforeFilter;
 
 /**
@@ -33,7 +38,8 @@ public class SecurityConfig {
 		//http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
 
 
-        http.cors().configurationSource(new CorsConfigurationSource() {
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() // added to remove JSESSION from request
+        .cors().configurationSource(new CorsConfigurationSource() {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration config = new CorsConfiguration();
@@ -41,13 +47,17 @@ public class SecurityConfig {
                         config.setAllowedMethods(Collections.singletonList("*"));
                         config.setAllowCredentials(true);
                         config.setAllowedHeaders(Collections.singletonList("*"));
+                        config.setExposedHeaders(Arrays.asList(SecurityConstants.JWT_HEADER));
                         config.setMaxAge(3600L);
                         return config;
                     }
-                }).and().csrf().ignoringAntMatchers("/contact").
-                csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
-                .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
+                })
+        		//.and().csrf().ignoringAntMatchers("/contact").csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and() /** disable CSRF as we can use JWT to authenticate and authorize request **/
+        		.and().csrf().disable()
+        		.addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JWTSessionValidatorFilter(), BasicAuthenticationFilter.class)
+                .addFilterAfter(new JWTSessionGeneratorFilter(), BasicAuthenticationFilter.class)
         		.authorizeHttpRequests((auth) -> auth
 						/*
 						 * .antMatchers("/myAccount").hasAuthority("WRITE")
